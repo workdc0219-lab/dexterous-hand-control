@@ -1,0 +1,15 @@
+# Hand Keypoints Dataset Configuration
+
+# 数据集路径（使用绝对路径）
+path: F:/Users/Irelia/Desktop/毕设项目/dexterous_hand/vision/data/hand_keypoints
+train: images/train
+val: images/val
+
+# 关键点配置
+kpt_shape: [21, 3]  # 21个关键点, 每个(x, y, visibility)
+flip_idx: [0, 4, 3, 2, 1, 8, 7, 6, 5, 12, 11, 10, 9, 16, 15, 14, 13, 20, 19, 18, 17]
+
+# 类别
+nc: 1
+names:
+  0: hand
