@@ -207,6 +207,11 @@ static uint16_t FSR_ApplyFilter(uint8_t channel, uint16_t new_val)
     g_filter_sum[channel] += new_val;
     g_filter_idx[channel] = (g_filter_idx[channel] + 1) % FSR_FILTER_WINDOW;
 
+    /* 除零保护 */
+    if (g_filter_count[channel] == 0) {
+        return 0;
+    }
+
     return (uint16_t)(g_filter_sum[channel] / g_filter_count[channel]);
 }
 

@@ -22,6 +22,10 @@ void Motor_Init(void)
     /* 使能时钟 */
     __HAL_RCC_TIM3_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_AFIO_CLK_ENABLE();
+
+    /* TIM3部分重映射: CH1->PB4, CH2->PB5, CH3->PB0, CH4->PB1 */
+    __HAL_AFIO_REMAP_TIM3_ENABLE();
 
     /* 方向引脚 PB2, PB3 */
     gpio.Pin = MOTOR_DIR_A_PIN | MOTOR_DIR_B_PIN;

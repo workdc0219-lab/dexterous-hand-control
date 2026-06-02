@@ -10,6 +10,7 @@
 #include "encoder.h"
 #include "fsr_sensor.h"
 #include "can_protocol.h"
+#include "pid_ctrl.h"
 
 /* ──────────────── 私有变量 ──────────────── */
 static uint32_t s_stall_start_time = 0;
@@ -150,6 +151,9 @@ void Safety_EmergencyStop(ErrorCode_t reason)
 
     /* 停止电机 */
     Motor_Stop();
+
+    /* 重置PID控制器，防止恢复时输出跳变 */
+    PID_Reset();
 }
 
 /**

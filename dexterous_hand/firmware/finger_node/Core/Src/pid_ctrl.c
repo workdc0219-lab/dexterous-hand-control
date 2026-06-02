@@ -73,13 +73,21 @@ void PID_Init(void)
 }
 
 /**
+ * @brief 限制PID参数范围
+ */
+static uint16_t PID_ClampParam(uint16_t value, uint16_t max_val)
+{
+    return (value > max_val) ? max_val : value;
+}
+
+/**
  * @brief 设置位置环PID参数
  */
 void PID_SetPositionParams(uint16_t kp, uint16_t ki, uint16_t kd)
 {
-    s_pos_pid.kp = (float)kp / 100.0f;
-    s_pos_pid.ki = (float)ki / 100.0f;
-    s_pos_pid.kd = (float)kd / 100.0f;
+    s_pos_pid.kp = (float)PID_ClampParam(kp, PID_KP_MAX_RAW) / 100.0f;
+    s_pos_pid.ki = (float)PID_ClampParam(ki, PID_KI_MAX_RAW) / 100.0f;
+    s_pos_pid.kd = (float)PID_ClampParam(kd, PID_KD_MAX_RAW) / 100.0f;
 }
 
 /**
@@ -87,9 +95,9 @@ void PID_SetPositionParams(uint16_t kp, uint16_t ki, uint16_t kd)
  */
 void PID_SetForceParams(uint16_t kp, uint16_t ki, uint16_t kd)
 {
-    s_force_pid.kp = (float)kp / 100.0f;
-    s_force_pid.ki = (float)ki / 100.0f;
-    s_force_pid.kd = (float)kd / 100.0f;
+    s_force_pid.kp = (float)PID_ClampParam(kp, PID_KP_MAX_RAW) / 100.0f;
+    s_force_pid.ki = (float)PID_ClampParam(ki, PID_KI_MAX_RAW) / 100.0f;
+    s_force_pid.kd = (float)PID_ClampParam(kd, PID_KD_MAX_RAW) / 100.0f;
 }
 
 /**

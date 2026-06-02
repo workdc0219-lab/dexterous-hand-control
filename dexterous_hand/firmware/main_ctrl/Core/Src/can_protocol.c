@@ -218,7 +218,10 @@ HAL_StatusTypeDef CAN_BroadcastAngle(const uint16_t angles[5], uint16_t speed)
  */
 void CAN_RegisterCallback(CanCmd_t cmd, CAN_RxCmdCallback_t cb)
 {
-    g_cmd_callbacks[cmd] = cb;
+    /* 边界检查 */
+    if ((uint8_t)cmd < 256) {
+        g_cmd_callbacks[(uint8_t)cmd] = cb;
+    }
 }
 
 /**

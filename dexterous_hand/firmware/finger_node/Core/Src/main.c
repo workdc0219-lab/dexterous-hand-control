@@ -174,15 +174,26 @@ int main(void)
     /* 初始化完成，LED亮 */
     HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
+    /* 主循环周期控制 */
+    #define MAIN_LOOP_PERIOD_MS    1
+    uint32_t last_loop_tick = HAL_GetTick();
+
     /* ──────────────── 主循环 ──────────────── */
     while (1) {
-        g_finger.tick = HAL_GetTick();
+        /* 周期控制: 等待到下一个周期 */
+        uint32_t now = HAL_GetTick();
+        if ((now - last_loop_tick) < MAIN_LOOP_PERIOD_MS) {
+            continue;  /* 未到周期，继续等待 */
+        }
+        last_loop_tick = now;
+
+        g_finger.tick = now;
 
         /* 1. CAN接收处理 */
         CAN_ProcessRx();
 
         /* 2. 读取编码器角度 */
-        g_finger.encoder_raw = (uint16_t)Encoder_GetCount();
+        g_finger.encoder_raw = Encoder_GetCount();
         g_finger.angle = Encoder_GetAngle();
 
         /* 3. 读取FSR力值 */
@@ -211,9 +222,6 @@ int main(void)
             /* LED心跳闪烁 */
             HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
         }
-
-        /* 主循环延时 ~1ms */
-        HAL_Delay(1);
     }
 }
 

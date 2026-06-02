@@ -22,12 +22,7 @@ from .keypoint_mapper import KeypointMapper
 from .trajectory_smooth import TrajectorySmooth
 from .uart_sender import UARTSender
 
-# 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+# 获取 logger (日志配置在入口脚本中统一设置)
 logger = logging.getLogger(__name__)
 
 

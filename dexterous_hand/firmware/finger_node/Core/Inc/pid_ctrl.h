@@ -25,6 +25,11 @@ extern "C" {
 #define PID_OUTPUT_MIN          (-1000)
 #define PID_OUTPUT_MAX          1000
 
+/* PID参数范围限制 (uint16_t传入，÷100后使用) */
+#define PID_KP_MAX_RAW          10000   /* 实际Kp最大100.0 */
+#define PID_KI_MAX_RAW          5000    /* 实际Ki最大50.0 */
+#define PID_KD_MAX_RAW          5000    /* 实际Kd最大50.0 */
+
 /* ──────────────── PID实例结构体 ──────────────── */
 typedef struct {
     float kp;

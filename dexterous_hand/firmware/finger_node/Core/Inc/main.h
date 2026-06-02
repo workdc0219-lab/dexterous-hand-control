@@ -52,7 +52,7 @@ extern "C" {
 typedef struct {
     /* 传感器数据 */
     uint16_t    angle;          /* 当前角度 (×10, 0.1度精度) */
-    uint16_t    encoder_raw;    /* 编码器原始计数 */
+    int16_t     encoder_raw;    /* 编码器原始计数 (有符号) */
     uint16_t    force;          /* 当前力值 (×100, 单位N) */
     uint16_t    adc_raw;        /* ADC原始值 */
     uint8_t     contact;        /* 接触标志 */
