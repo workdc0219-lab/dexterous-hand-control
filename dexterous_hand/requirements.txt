@@ -1,26 +1,25 @@
-# 灵巧手项目依赖
+# Dexterous Hand Project Dependencies
 
-# 训练和推理
+# Training and Inference
 ultralytics>=8.0.0
 opencv-python>=4.8.0
 numpy>=1.24.0
 onnxruntime>=1.16.0
 
-# 配置
+# Configuration
 pyyaml>=6.0
 
-# 可视化
+# Visualization
 matplotlib>=3.7.0
 
-# 串口通信
+# Serial Communication
 pyserial>=3.5
 
-# CAN总线
+# CAN Bus
 python-can>=4.0.0
 
-# 仿真
+# Simulation
 mujoco>=3.0.0
-dex-retargeting>=0.2.0
 
-# 测试
+# Testing
 pytest>=7.0.0
