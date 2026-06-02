@@ -339,7 +339,7 @@ void Error_Handler(void)
 void USART2_IRQHandler(void)
 {
     UART_IdleIRQHandler();
-    HAL_UART_IRQHandler(NULL);
+    HAL_UART_IRQHandler(UART_GetHandle());
 }
 
 /**

@@ -10,52 +10,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-#include <assert.h>
+#include "test_helpers.h"
 
 /* 测试计数器 */
-static int tests_run = 0;
-static int tests_passed = 0;
-static int tests_failed = 0;
-
-/* 测试宏 */
-#define TEST_ASSERT(condition, message) \
-    do { \
-        tests_run++; \
-        if (condition) { \
-            tests_passed++; \
-            printf("  ✓ %s\n", message); \
-        } else { \
-            tests_failed++; \
-            printf("  ✗ %s (line %d)\n", message, __LINE__); \
-        } \
-    } while(0)
-
-#define TEST_ASSERT_EQUAL(expected, actual, message) \
-    do { \
-        tests_run++; \
-        if ((expected) == (actual)) { \
-            tests_passed++; \
-            printf("  ✓ %s\n", message); \
-        } else { \
-            tests_failed++; \
-            printf("  ✗ %s: expected %d, got %d (line %d)\n", \
-                   message, (int)(expected), (int)(actual), __LINE__); \
-        } \
-    } while(0)
-
-#define TEST_ASSERT_FLOAT(expected, actual, tolerance, message) \
-    do { \
-        tests_run++; \
-        if (fabs((double)(expected) - (double)(actual)) <= (tolerance)) { \
-            tests_passed++; \
-            printf("  ✓ %s\n", message); \
-        } else { \
-            tests_failed++; \
-            printf("  ✗ %s: expected %.2f, got %.2f (line %d)\n", \
-                   message, (double)(expected), (double)(actual), __LINE__); \
-        } \
-    } while(0)
+int tests_run = 0;
+int tests_passed = 0;
+int tests_failed = 0;
 
 /* 外部测试函数声明 */
 extern void test_pid_controller(void);

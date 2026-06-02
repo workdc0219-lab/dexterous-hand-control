@@ -108,3 +108,11 @@ uint16_t Motor_GetCurrent(void)
     /* TODO: 实现电流采样 */
     return 0;
 }
+
+/**
+ * @brief 获取当前PWM占空比
+ */
+int16_t Motor_GetCurrentDuty(void)
+{
+    return s_current_duty;
+}

@@ -77,22 +77,22 @@ NVIC.USART2_IRQn=true\:1\:0\:false\:false\:true\:true\:false\:false\:true
 NVIC.UsageFault_IRQn=true\:0\:0\:false\:false\:true\:true\:false\:false\:true
 
 # GPIO Configuration
-PA11.Mode=CAN1_RX
-PA12.Mode=CAN1_TX
+PB8.Mode=CAN1_RX
+PB9.Mode=CAN1_TX
 PA2.Mode=USART2_TX
 PA3.Mode=USART2_RX
 
 # Signal Configuration
 S.CAN1_RX.DefaultPin=0
-S.CAN1_RX.GPIO_Pin=11
-S.CAN1_RX.GPIO_Port=GPIOA
+S.CAN1_RX.GPIO_Pin=8
+S.CAN1_RX.GPIO_Port=GPIOB
 S.CAN1_RX.Locked=0
 S.CAN1_RX.Mode=CAN1_RX
 S.CAN1_RX.Signal=CAN1_RX
 
 S.CAN1_TX.DefaultPin=0
-S.CAN1_TX.GPIO_Pin=12
-S.CAN1_TX.GPIO_Port=GPIOA
+S.CAN1_TX.GPIO_Pin=9
+S.CAN1_TX.GPIO_Port=GPIOB
 S.CAN1_TX.Locked=0
 S.CAN1_TX.Mode=CAN1_TX
 S.CAN1_TX.Signal=CAN1_TX

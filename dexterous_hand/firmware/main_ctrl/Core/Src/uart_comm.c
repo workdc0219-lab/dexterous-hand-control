@@ -221,3 +221,11 @@ void DMA1_Stream5_IRQHandler(void)
 {
     HAL_DMA_IRQHandler(&hdma_usart2_rx);
 }
+
+/**
+ * @brief  获取UART句柄指针
+ */
+UART_HandleTypeDef* UART_GetHandle(void)
+{
+    return &huart2;
+}

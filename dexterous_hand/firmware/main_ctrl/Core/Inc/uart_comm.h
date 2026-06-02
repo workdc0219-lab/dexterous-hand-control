@@ -63,6 +63,12 @@ void UART_IdleIRQHandler(void);
  */
 uint8_t UART_CalcCRC8(const uint8_t *data, uint8_t len);
 
+/**
+ * @brief  获取UART句柄指针
+ * @retval UART_HandleTypeDef指针
+ */
+UART_HandleTypeDef* UART_GetHandle(void);
+
 #ifdef __cplusplus
 }
 #endif

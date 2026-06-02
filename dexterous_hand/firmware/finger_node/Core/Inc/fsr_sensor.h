@@ -14,7 +14,7 @@ extern "C" {
 #endif
 
 /* ──────────────── 参数定义 ──────────────── */
-#define FSR_ADC_CHANNEL         ADC_CHANNEL_0   /* PA0 */
+#define FSR_ADC_CHANNEL         ADC_CHANNEL_4   /* PA4 (避免与编码器PA0冲突) */
 #define FSR_FILTER_SIZE         8               /* 滑动窗口大小 */
 #define FSR_CONTACT_THRESHOLD   100             /* 接触判定阈值 (ADC值) */
 #define FSR_OVERLOAD_THRESHOLD  3800            /* 过载阈值 (ADC值) */

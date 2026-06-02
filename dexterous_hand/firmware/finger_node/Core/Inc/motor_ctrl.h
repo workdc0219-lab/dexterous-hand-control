@@ -58,6 +58,12 @@ void Motor_Stop(void);
  */
 uint16_t Motor_GetCurrent(void);
 
+/**
+ * @brief 获取当前PWM占空比
+ * @return 当前占空比 (-1000 ~ +1000)
+ */
+int16_t Motor_GetCurrentDuty(void);
+
 #ifdef __cplusplus
 }
 #endif

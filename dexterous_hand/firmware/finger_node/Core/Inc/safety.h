@@ -69,6 +69,19 @@ void Safety_EmergencyStop(ErrorCode_t reason);
  */
 void Safety_UpdateCANTimestamp(void);
 
+/**
+ * @brief 尝试恢复运行
+ * @details 如果错误已消除，清除急停状态
+ * @return 1=恢复成功, 0=仍有错误
+ */
+uint8_t Safety_TryRecover(void);
+
+/**
+ * @brief 检查是否处于急停状态
+ * @return 1=急停中, 0=正常
+ */
+uint8_t Safety_IsEStopActive(void);
+
 #ifdef __cplusplus
 }
 #endif

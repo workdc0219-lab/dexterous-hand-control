@@ -26,8 +26,8 @@ static void FSR_ADC_Init(void)
     __HAL_RCC_ADC1_CLK_ENABLE();
     __HAL_RCC_GPIOA_CLK_ENABLE();
 
-    /* PA0 模拟输入 */
-    gpio.Pin = GPIO_PIN_0;
+    /* PA4 模拟输入 (避免与编码器PA0冲突) */
+    gpio.Pin = GPIO_PIN_4;
     gpio.Mode = GPIO_MODE_ANALOG;
     HAL_GPIO_Init(GPIOA, &gpio);
 

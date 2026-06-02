@@ -75,8 +75,8 @@ ErrorCode_t Safety_Check(void)
  */
 uint8_t Safety_CheckStall(void)
 {
-    /* 获取当前PWM (简化: 检查电机是否在驱动) */
-    int16_t pwm = 0;  /* TODO: 从Motor模块获取当前PWM */
+    /* 获取当前PWM */
+    int16_t pwm = Motor_GetCurrentDuty();
     int16_t encoder = Encoder_GetCount();
 
     /* 检查条件: PWM > 80% */
@@ -159,4 +159,34 @@ void Safety_UpdateCANTimestamp(void)
 {
     s_last_can_time = HAL_GetTick();
     g_finger.last_can_time = s_last_can_time;
+}
+
+/**
+ * @brief 尝试恢复运行
+ */
+uint8_t Safety_TryRecover(void)
+{
+    /* 检查是否还有未解决的错误 */
+    if (Safety_CheckCANTimeout()) {
+        return 0;  /* CAN仍超时，无法恢复 */
+    }
+
+    /* 清除急停状态 */
+    s_estop_active = 0;
+    g_finger.error_code = ERR_NONE;
+    g_finger.sys_status |= SYS_STATUS_RUNNING;
+    g_finger.sys_status &= ~SYS_STATUS_ESTOP;
+
+    /* 重置PID控制器 */
+    PID_Reset();
+
+    return 1;  /* 恢复成功 */
+}
+
+/**
+ * @brief 检查是否处于急停状态
+ */
+uint8_t Safety_IsEStopActive(void)
+{
+    return s_estop_active;
 }

@@ -375,23 +375,29 @@ class PoseDetector:
         Returns:
             List[DetectionResult]: 检测结果列表
         """
-        # YOLOv8-pose 输出格式: [batch, 56, num_detections]
-        # 56 = 4(bbox) + 1(conf) + 1(class) + 21*2(keypoints_x, keypoints_y)
-        # 实际输出可能是 [batch, 56, 8400] 或类似格式
+        # YOLOv8-pose 输出格式: [batch, num_features, num_detections]
+        # 对于21个手部关键点:
+        # num_features = 4(bbox) + 1(conf) + 1(class) + 21*3(kp_x, kp_y, kp_conf) = 69
+        # 对于COCO 17个关键点:
+        # num_features = 4(bbox) + 1(conf) + 1(class) + 17*3(kp_x, kp_y, kp_conf) = 56
 
-        predictions = outputs[0]  # [batch, 56, num_detections]
+        predictions = outputs[0]  # [batch, num_features, num_detections]
 
         if len(predictions.shape) == 3:
-            predictions = predictions[0]  # [56, num_detections]
+            predictions = predictions[0]  # [num_features, num_detections]
 
-        # 转置为 [num_detections, 56]
+        # 转置为 [num_detections, num_features]
         predictions = predictions.T
 
         # 分离各部分
         boxes = predictions[:, :4]  # [cx, cy, w, h]
         confidences = predictions[:, 4]
         classes = predictions[:, 5]
-        keypoints = predictions[:, 6:]  # [21*2]
+        keypoints_raw = predictions[:, 6:]  # [21*3] or [17*3]
+
+        # 确定关键点数量 (每个关键点3个值: x, y, confidence)
+        num_kpts = keypoints_raw.shape[1] // 3
+        keypoints = keypoints_raw.reshape(-1, num_kpts, 3)  # [N, num_kpts, 3]
 
         # 置信度过滤
         mask = confidences >= self.conf_threshold
@@ -429,13 +435,14 @@ class PoseDetector:
             box[3] = max(0, min(box[3], original_shape[0]))
 
             # 获取关键点并还原到原图坐标
-            kpts = keypoints[idx].reshape(21, 2)
+            # keypoints[idx] shape: [num_kpts, 3] (x, y, confidence)
+            kpts = keypoints[idx]
             kpts_x = (kpts[:, 0] - letterbox_info.dw) / letterbox_info.ratio
             kpts_y = (kpts[:, 1] - letterbox_info.dh) / letterbox_info.ratio
+            kpts_conf = kpts[:, 2]  # 每个关键点自己的置信度
 
-            # 添加置信度（使用检测置信度）
-            kpts_conf = np.full((21, 1), confidences[idx])
-            kpts_21 = np.stack([kpts_x, kpts_y, kpts_conf[:, 0]], axis=1)
+            # 组合为 [num_kpts, 3] 格式
+            kpts_21 = np.stack([kpts_x, kpts_y, kpts_conf], axis=1)
 
             results.append(DetectionResult(
                 bbox=box,

@@ -126,6 +126,11 @@ static void CAN_ProcessFrame(CanFrame_t *frame)
     case CMD_HEARTBEAT: {
         /* 心跳，更新时间戳 */
         Safety_UpdateCANTimestamp();
+
+        /* 如果处于急停状态，尝试恢复 */
+        if (Safety_IsEStopActive()) {
+            Safety_TryRecover();
+        }
         break;
     }
 
@@ -153,11 +158,11 @@ void CAN_Protocol_Init(NodeId_t self_id)
 
     /* CAN外设初始化 */
     hcan.Instance = CAN1;
-    hcan.Init.Prescaler = 9;             /* 72MHz / 9 / (1+8+7) = 500Kbps ... 需根据实际调整 */
+    hcan.Init.Prescaler = 2;             /* APB1=36MHz, 36MHz/2/18=1Mbps */
     hcan.Init.Mode = CAN_MODE_NORMAL;
     hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
-    hcan.Init.TimeSeg1 = CAN_BS1_8TQ;
-    hcan.Init.TimeSeg2 = CAN_BS2_7TQ;
+    hcan.Init.TimeSeg1 = CAN_BS1_15TQ;
+    hcan.Init.TimeSeg2 = CAN_BS2_2TQ;
     hcan.Init.TimeTriggeredMode = DISABLE;
     hcan.Init.AutoBusOff = ENABLE;
     hcan.Init.AutoWakeUp = DISABLE;

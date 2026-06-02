@@ -6,36 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
-
-/* 测试宏 */
-extern int tests_run;
-extern int tests_passed;
-extern int tests_failed;
-
-#define TEST_ASSERT(condition, message) \
-    do { \
-        tests_run++; \
-        if (condition) { \
-            tests_passed++; \
-            printf("  ✓ %s\n", message); \
-        } else { \
-            tests_failed++; \
-            printf("  ✗ %s (line %d)\n", message, __LINE__); \
-        } \
-    } while(0)
-
-#define TEST_ASSERT_EQUAL(expected, actual, message) \
-    do { \
-        tests_run++; \
-        if ((expected) == (actual)) { \
-            tests_passed++; \
-            printf("  ✓ %s\n", message); \
-        } else { \
-            tests_failed++; \
-            printf("  ✗ %s: expected %d, got %d (line %d)\n", \
-                   message, (int)(expected), (int)(actual), __LINE__); \
-        } \
-    } while(0)
+#include "test_helpers.h"
 
 /* ──────────────── CAN 协议定义 (模拟) ──────────────── */
 
