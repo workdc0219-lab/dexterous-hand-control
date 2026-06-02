@@ -1,0 +1,192 @@
+<!--
+  @file    leap_hand_description.xml
+  @brief   简化的灵巧手MuJoCo XML模型
+  @details 5根手指，每根3个关节（MCP, PIP, DIP），含桌面场景和可抓取球体。
+           这是简化模型，用于验证运动学，不是完整的LEAP Hand。
+-->
+
+<mujoco model="leap_hand_simple">
+  <compiler angle="degree" autolimits="true"/>
+
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+
+  <default>
+    <joint armature="0.01" damping="0.1"/>
+    <geom condim="4" friction="1.0 0.005 0.0001"/>
+    <position kp="50" kv="5"/>
+  </default>
+
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.8 0.8 0.8" rgb2="0.6 0.6 0.6" width="512" height="512"/>
+    <material name="grid_mat" texture="grid" texrepeat="4 4" reflectance="0.1"/>
+    <material name="hand_mat" rgba="0.4 0.6 0.8 1.0"/>
+    <material name="palm_mat" rgba="0.3 0.5 0.7 1.0"/>
+    <material name="finger_mat" rgba="0.5 0.7 0.9 1.0"/>
+    <material name="ball_mat" rgba="0.9 0.2 0.2 1.0"/>
+    <material name="cylinder_mat" rgba="0.2 0.8 0.2 1.0"/>
+    <material name="box_mat" rgba="0.2 0.2 0.9 1.0"/>
+  </asset>
+
+  <worldbody>
+    <!-- 地面 -->
+    <geom name="floor" type="plane" size="0.5 0.5 0.01" material="grid_mat"/>
+    <light directional="true" diffuse="0.8 0.8 0.8" specular="0.3 0.3 0.3" pos="0 0 4" dir="0 0 -1"/>
+
+    <!-- 桌面 -->
+    <body name="table" pos="0.25 0 0.3">
+      <geom name="table_top" type="box" size="0.2 0.15 0.01" rgba="0.6 0.4 0.2 1.0" mass="5"/>
+      <geom name="table_leg1" type="cylinder" size="0.02 0.15" pos=" 0.15  0.1 -0.16" rgba="0.5 0.3 0.1 1.0"/>
+      <geom name="table_leg2" type="cylinder" size="0.02 0.15" pos="-0.15  0.1 -0.16" rgba="0.5 0.3 0.1 1.0"/>
+      <geom name="table_leg3" type="cylinder" size="0.02 0.15" pos=" 0.15 -0.1 -0.16" rgba="0.5 0.3 0.1 1.0"/>
+      <geom name="table_leg4" type="cylinder" size="0.02 0.15" pos="-0.15 -0.1 -0.16" rgba="0.5 0.3 0.1 1.0"/>
+    </body>
+
+    <!-- 可抓取球体 -->
+    <body name="ball" pos="0.25 0 0.36">
+      <freejoint name="ball_joint"/>
+      <geom name="ball_geom" type="sphere" size="0.025" material="ball_mat" mass="0.05"/>
+    </body>
+
+    <!-- 灵巧手基座（手掌） -->
+    <body name="palm" pos="0 0 0.4">
+      <geom name="palm_geom" type="box" size="0.04 0.06 0.015" material="palm_mat" mass="0.2"/>
+
+      <!-- ============ 拇指 ============ -->
+      <body name="thumb_base" pos="0.035 0.04 0.01">
+        <joint name="thumb_mcp_x" type="hinge" axis="1 0 0" range="-20 60"/>
+        <geom name="thumb_mcp_geom" type="capsule" fromto="0 0 0 0 0 0.028" size="0.008" material="finger_mat"/>
+
+        <body name="thumb_mcp" pos="0 0 0.028">
+          <joint name="thumb_mcp_y" type="hinge" axis="0 1 0" range="-10 70"/>
+          <geom name="thumb_pip_geom" type="capsule" fromto="0 0 0 0 0 0.025" size="0.007" material="finger_mat"/>
+
+          <body name="thumb_pip" pos="0 0 0.025">
+            <joint name="thumb_pip" type="hinge" axis="0 1 0" range="0 80"/>
+            <geom name="thumb_dip_geom" type="capsule" fromto="0 0 0 0 0 0.02" size="0.006" material="finger_mat"/>
+
+            <body name="thumb_tip" pos="0 0 0.02">
+              <geom name="thumb_tip_geom" type="sphere" size="0.006" material="finger_mat" contype="1" conaffinity="1"/>
+              <site name="thumb_tip_site" pos="0 0 0" size="0.003"/>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- ============ 食指 ============ -->
+      <body name="index_base" pos="0.02 0.02 0.015">
+        <joint name="index_mcp" type="hinge" axis="1 0 0" range="-10 90"/>
+        <geom name="index_mcp_geom" type="capsule" fromto="0 0 0 0 0 0.032" size="0.007" material="finger_mat"/>
+
+        <body name="index_mcp" pos="0 0 0.032">
+          <joint name="index_pip" type="hinge" axis="1 0 0" range="0 100"/>
+          <geom name="index_pip_geom" type="capsule" fromto="0 0 0 0 0 0.025" size="0.006" material="finger_mat"/>
+
+          <body name="index_pip" pos="0 0 0.025">
+            <joint name="index_dip" type="hinge" axis="1 0 0" range="0 80"/>
+            <geom name="index_dip_geom" type="capsule" fromto="0 0 0 0 0 0.018" size="0.005" material="finger_mat"/>
+
+            <body name="index_tip" pos="0 0 0.018">
+              <geom name="index_tip_geom" type="sphere" size="0.005" material="finger_mat" contype="1" conaffinity="1"/>
+              <site name="index_tip_site" pos="0 0 0" size="0.003"/>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- ============ 中指 ============ -->
+      <body name="middle_base" pos="0.007 0.02 0.015">
+        <joint name="middle_mcp" type="hinge" axis="1 0 0" range="-10 90"/>
+        <geom name="middle_mcp_geom" type="capsule" fromto="0 0 0 0 0 0.035" size="0.007" material="finger_mat"/>
+
+        <body name="middle_mcp" pos="0 0 0.035">
+          <joint name="middle_pip" type="hinge" axis="1 0 0" range="0 100"/>
+          <geom name="middle_pip_geom" type="capsule" fromto="0 0 0 0 0 0.027" size="0.006" material="finger_mat"/>
+
+          <body name="middle_pip" pos="0 0 0.027">
+            <joint name="middle_dip" type="hinge" axis="1 0 0" range="0 80"/>
+            <geom name="middle_dip_geom" type="capsule" fromto="0 0 0 0 0 0.019" size="0.005" material="finger_mat"/>
+
+            <body name="middle_tip" pos="0 0 0.019">
+              <geom name="middle_tip_geom" type="sphere" size="0.005" material="finger_mat" contype="1" conaffinity="1"/>
+              <site name="middle_tip_site" pos="0 0 0" size="0.003"/>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- ============ 无名指 ============ -->
+      <body name="ring_base" pos="-0.007 0.02 0.015">
+        <joint name="ring_mcp" type="hinge" axis="1 0 0" range="-10 90"/>
+        <geom name="ring_mcp_geom" type="capsule" fromto="0 0 0 0 0 0.030" size="0.006" material="finger_mat"/>
+
+        <body name="ring_mcp" pos="0 0 0.030">
+          <joint name="ring_pip" type="hinge" axis="1 0 0" range="0 100"/>
+          <geom name="ring_pip_geom" type="capsule" fromto="0 0 0 0 0 0.024" size="0.005" material="finger_mat"/>
+
+          <body name="ring_pip" pos="0 0 0.024">
+            <joint name="ring_dip" type="hinge" axis="1 0 0" range="0 80"/>
+            <geom name="ring_dip_geom" type="capsule" fromto="0 0 0 0 0 0.017" size="0.004" material="finger_mat"/>
+
+            <body name="ring_tip" pos="0 0 0.017">
+              <geom name="ring_tip_geom" type="sphere" size="0.004" material="finger_mat" contype="1" conaffinity="1"/>
+              <site name="ring_tip_site" pos="0 0 0" size="0.003"/>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- ============ 小指 ============ -->
+      <body name="pinky_base" pos="-0.02 0.02 0.015">
+        <joint name="pinky_mcp" type="hinge" axis="1 0 0" range="-10 90"/>
+        <geom name="pinky_mcp_geom" type="capsule" fromto="0 0 0 0 0 0.025" size="0.005" material="finger_mat"/>
+
+        <body name="pinky_mcp" pos="0 0 0.025">
+          <joint name="pinky_pip" type="hinge" axis="1 0 0" range="0 100"/>
+          <geom name="pinky_pip_geom" type="capsule" fromto="0 0 0 0 0 0.020" size="0.005" material="finger_mat"/>
+
+          <body name="pinky_pip" pos="0 0 0.020">
+            <joint name="pinky_dip" type="hinge" axis="1 0 0" range="0 80"/>
+            <geom name="pinky_dip_geom" type="capsule" fromto="0 0 0 0 0 0.015" size="0.004" material="finger_mat"/>
+
+            <body name="pinky_tip" pos="0 0 0.015">
+              <geom name="pinky_tip_geom" type="sphere" size="0.004" material="finger_mat" contype="1" conaffinity="1"/>
+              <site name="pinky_tip_site" pos="0 0 0" size="0.003"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <!-- 执行器 -->
+  <actuator>
+    <position name="thumb_mcp_x_ctrl" joint="thumb_mcp_x" kp="50"/>
+    <position name="thumb_mcp_y_ctrl" joint="thumb_mcp_y" kp="50"/>
+    <position name="thumb_pip_ctrl" joint="thumb_pip" kp="50"/>
+
+    <position name="index_mcp_ctrl" joint="index_mcp" kp="50"/>
+    <position name="index_pip_ctrl" joint="index_pip" kp="50"/>
+    <position name="index_dip_ctrl" joint="index_dip" kp="50"/>
+
+    <position name="middle_mcp_ctrl" joint="middle_mcp" kp="50"/>
+    <position name="middle_pip_ctrl" joint="middle_pip" kp="50"/>
+    <position name="middle_dip_ctrl" joint="middle_dip" kp="50"/>
+
+    <position name="ring_mcp_ctrl" joint="ring_mcp" kp="50"/>
+    <position name="ring_pip_ctrl" joint="ring_pip" kp="50"/>
+    <position name="ring_dip_ctrl" joint="ring_dip" kp="50"/>
+
+    <position name="pinky_mcp_ctrl" joint="pinky_mcp" kp="50"/>
+    <position name="pinky_pip_ctrl" joint="pinky_pip" kp="50"/>
+    <position name="pinky_dip_ctrl" joint="pinky_dip" kp="50"/>
+  </actuator>
+
+  <!-- 传感器 -->
+  <sensor>
+    <framepos name="thumb_tip_pos" objtype="site" objname="thumb_tip_site"/>
+    <framepos name="index_tip_pos" objtype="site" objname="index_tip_site"/>
+    <framepos name="middle_tip_pos" objtype="site" objname="middle_tip_site"/>
+    <framepos name="ring_tip_pos" objtype="site" objname="ring_tip_site"/>
+    <framepos name="pinky_tip_pos" objtype="site" objname="pinky_tip_site"/>
+  </sensor>
+</mujoco>

@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 模型权重
+*.pt
+*.onnx
+*.om
+*.engine
+*.trt
+
+# 数据集
+datasets/
+data/
+
+# 日志
+logs/
+runs/
+wandb/
+
+# 编译产物
+firmware/*/build/
+firmware/*/.dep/
+*.o
+*.elf
+*.hex
+*.bin
+*.map
+
+# 操作系统
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 临时文件
+*.tmp
+*.bak
+*.log

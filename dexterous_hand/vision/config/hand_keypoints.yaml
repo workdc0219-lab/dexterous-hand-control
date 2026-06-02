@@ -1,0 +1,77 @@
+# Hand Keypoints Dataset Configuration for YOLOv8-pose
+# 21个手部关键点（兼容MediaPipe格式）
+
+# 数据集路径
+path: ./data/hand_keypoints  # 数据集根目录
+train: images/train  # 训练集图片（相对于path）
+val: images/val      # 验证集图片（相对于path）
+
+# 关键点配置
+kpt_shape: [21, 3]  # [关键点数量, 维度(x, y, visible)]
+flip_idx: [0,  # 0: WRIST
+           4, 3, 2, 1,  # 1-4: THUMB (TIP, IP, MCP, CMC)
+           8, 7, 6, 5,  # 5-8: INDEX (TIP, DIP, PIP, MCP)
+           12, 11, 10, 9,  # 9-12: MIDDLE (TIP, DIP, PIP, MCP)
+           16, 15, 14, 13,  # 13-16: RING (TIP, DIP, PIP, MCP)
+           20, 19, 18, 17]  # 17-20: PINKY (TIP, DIP, PIP, MCP)
+
+# 类别定义
+names:
+  0: hand
+
+# 关键点名称定义（21个）
+keypoint_names:
+  - WRIST           # 0: 手腕
+  - THUMB_CMC       # 1: 拇指腕掌关节
+  - THUMB_MCP       # 2: 拇指掌指关节
+  - THUMB_IP        # 3: 拇指指间关节
+  - THUMB_TIP       # 4: 拇指尖
+  - INDEX_MCP       # 5: 食指掌指关节
+  - INDEX_PIP       # 6: 食指近端指间关节
+  - INDEX_DIP       # 7: 食指远端指间关节
+  - INDEX_TIP       # 8: 食指尖
+  - MIDDLE_MCP      # 9: 中指掌指关节
+  - MIDDLE_PIP      # 10: 中指近端指间关节
+  - MIDDLE_DIP      # 11: 中指远端指间关节
+  - MIDDLE_TIP      # 12: 中指尖
+  - RING_MCP        # 13: 无名指掌指关节
+  - RING_PIP        # 14: 无名指近端指间关节
+  - RING_DIP        # 15: 无名指远端指间关节
+  - RING_TIP        # 16: 无名指尖
+  - PINKY_MCP       # 17: 小指掌指关节
+  - PINKY_PIP       # 18: 小指近端指间关节
+  - PINKY_DIP       # 19: 小指远端指间关节
+  - PINKY_TIP       # 20: 小指尖
+
+# 骨架连接定义（用于可视化）
+skeleton:
+  - [0, 1]   # WRIST -> THUMB_CMC
+  - [1, 2]   # THUMB_CMC -> THUMB_MCP
+  - [2, 3]   # THUMB_MCP -> THUMB_IP
+  - [3, 4]   # THUMB_IP -> THUMB_TIP
+  - [0, 5]   # WRIST -> INDEX_MCP
+  - [5, 6]   # INDEX_MCP -> INDEX_PIP
+  - [6, 7]   # INDEX_PIP -> INDEX_DIP
+  - [7, 8]   # INDEX_DIP -> INDEX_TIP
+  - [0, 9]   # WRIST -> MIDDLE_MCP
+  - [9, 10]  # MIDDLE_MCP -> MIDDLE_PIP
+  - [10, 11] # MIDDLE_PIP -> MIDDLE_DIP
+  - [11, 12] # MIDDLE_DIP -> MIDDLE_TIP
+  - [0, 13]  # WRIST -> RING_MCP
+  - [13, 14] # RING_MCP -> RING_PIP
+  - [14, 15] # RING_PIP -> RING_DIP
+  - [15, 16] # RING_DIP -> RING_TIP
+  - [0, 17]  # WRIST -> PINKY_MCP
+  - [17, 18] # PINKY_MCP -> PINKY_PIP
+  - [18, 19] # PINKY_PIP -> PINKY_DIP
+  - [19, 20] # PINKY_DIP -> PINKY_TIP
+
+# 训练参数（可选，用于参考）
+training:
+  epochs: 100
+  batch_size: 16
+  imgsz: 640
+  optimizer: AdamW
+  lr0: 0.001
+  lrf: 0.01
+  weight_decay: 0.0005
