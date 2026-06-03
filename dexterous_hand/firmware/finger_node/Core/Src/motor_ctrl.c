@@ -27,6 +27,9 @@ void Motor_Init(void)
     /* TIM3部分重映射: CH1->PB4, CH2->PB5, CH3->PB0, CH4->PB1 */
     __HAL_AFIO_REMAP_TIM3_ENABLE();
 
+    /* 禁用JTAG，释放PB3/PB4用于GPIO/PWM功能（保留SWD调试） */
+    __HAL_AFIO_REMAP_SWJ_NOJTAG();
+
     /* 方向引脚 PB2, PB3 */
     gpio.Pin = MOTOR_DIR_A_PIN | MOTOR_DIR_B_PIN;
     gpio.Mode = GPIO_MODE_OUTPUT_PP;

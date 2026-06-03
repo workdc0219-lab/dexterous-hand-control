@@ -175,6 +175,31 @@ uint8_t Safety_TryRecover(void)
         return 0;  /* CAN仍超时，无法恢复 */
     }
 
+    /* 根据原始故障类型检查是否可以恢复 */
+    switch (g_finger.error_code) {
+        case ERR_STALL:
+            /* 检查堵转是否已消除 */
+            if (Safety_CheckStall()) {
+                return 0;  /* 仍堵转，无法恢复 */
+            }
+            break;
+
+        case ERR_FSR_OVERLOAD:
+            /* 检查FSR过载是否已消除 */
+            if (Safety_CheckFSROverload()) {
+                return 0;  /* 仍过载，无法恢复 */
+            }
+            break;
+
+        case ERR_COMM_TIMEOUT:
+            /* CAN超时已在上面检查 */
+            break;
+
+        default:
+            /* 其他错误类型，允许恢复 */
+            break;
+    }
+
     /* 清除急停状态 */
     s_estop_active = 0;
     g_finger.error_code = ERR_NONE;

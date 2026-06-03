@@ -279,6 +279,7 @@ class InferencePipeline:
 
         self._running = True
         default_angles = np.zeros(5)
+        fps = 0.0  # 初始化帧率变量
 
         try:
             while self._running:

@@ -23,7 +23,7 @@ extern "C" {
 
 /**
  * @brief 初始化FSR传感器
- * @note  配置ADC (PA0)
+ * @note  配置ADC (PA4)
  */
 void FSR_Init(void);
 

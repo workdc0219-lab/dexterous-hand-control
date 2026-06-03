@@ -232,6 +232,11 @@ int main(void)
  */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+    /* 急停检查: 如果处于急停状态，不执行任何电机控制 */
+    if (Safety_IsEStopActive()) {
+        return;
+    }
+
     if (htim->Instance == TIM6) {
         /* 位置环PID */
         if (g_finger.ctrl_mode == CTRL_MODE_POSITION ||

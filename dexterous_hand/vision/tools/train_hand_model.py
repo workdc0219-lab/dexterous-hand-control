@@ -187,27 +187,20 @@ def main():
     export_parser.add_argument("--weights", type=str, required=True, help="模型权重路径")
     export_parser.add_argument("--imgsz", type=int, default=640, help="图片尺寸")
 
-    # 简化参数（兼容直接运行）
-    parser.add_argument("--data", type=str, default="./data/hand_keypoints")
-    parser.add_argument("--model", type=str, default="yolov8n-pose.pt")
-    parser.add_argument("--epochs", type=int, default=100)
-    parser.add_argument("--batch_size", type=int, default=16)
-    parser.add_argument("--imgsz", type=int, default=640)
-    parser.add_argument("--device", type=str, default=None)
-    parser.add_argument("--workers", type=int, default=4)
-    parser.add_argument("--project", type=str, default="runs/train")
-    parser.add_argument("--name", type=str, default="hand_pose")
-    parser.add_argument("--export", action="store_true", help="导出ONNX")
-    parser.add_argument("--weights", type=str, default=None)
-
     args = parser.parse_args()
 
-    if args.command == "train" or args.epochs:
+    # 根据子命令执行相应操作
+    if args.command == "train":
         train(args)
-    elif args.command == "export" or args.export:
+    elif args.command == "export":
         export_onnx(args)
     else:
-        parser.print_help()
+        # 如果没有指定子命令，默认执行训练（兼容旧用法）
+        if not args.command:
+            args.command = "train"
+            train(args)
+        else:
+            parser.print_help()
 
 
 if __name__ == "__main__":

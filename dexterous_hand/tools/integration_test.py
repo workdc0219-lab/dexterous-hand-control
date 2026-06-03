@@ -30,10 +30,11 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-# 添加父目录到路径
-sys.path.insert(0, str(Path(__file__).parent.parent / "vision"))
-sys.path.insert(0, str(Path(__file__).parent.parent / "vision" / "inference"))
+# 添加项目根目录到路径（使用包导入）
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
+# 统一日志配置
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
@@ -97,7 +98,7 @@ class IntegrationTest:
             # 测试4: 关键点映射
             logger.info("4. 关键点映射测试...")
             try:
-                from keypoint_mapper import KeypointMapper
+                from vision.inference.keypoint_mapper import KeypointMapper
                 mapper = KeypointMapper()
                 # 创建模拟关键点
                 mock_keypoints = np.random.rand(21, 3) * 100
@@ -112,7 +113,7 @@ class IntegrationTest:
             # 测试5: 轨迹平滑
             logger.info("5. 轨迹平滑测试...")
             try:
-                from trajectory_smooth import TrajectorySmooth
+                from vision.inference.trajectory_smooth import TrajectorySmooth
                 smoother = TrajectorySmooth()
                 angles = np.array([10, 20, 30, 40, 50], dtype=float)
                 smoothed = smoother.smooth(angles)
@@ -161,7 +162,7 @@ class IntegrationTest:
             # 测试2: 发送测试数据
             logger.info("2. 发送测试数据...")
             try:
-                from uart_sender import UARTSender
+                from vision.inference.uart_sender import UARTSender
                 uart = UARTSender(port=self.uart_port, baudrate=115200)
                 angles = np.array([90, 45, 60, 30, 75], dtype=float)
                 success = uart.send_angles(angles)
