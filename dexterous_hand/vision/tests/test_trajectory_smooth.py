@@ -6,11 +6,15 @@ Usage:
     pytest test_trajectory_smooth.py -v
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import pytest
 
-import sys
-sys.path.insert(0, '..')
+# 添加 vision 目录到路径
+VISION_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(VISION_ROOT))
 
 from inference.trajectory_smooth import TrajectorySmooth
 

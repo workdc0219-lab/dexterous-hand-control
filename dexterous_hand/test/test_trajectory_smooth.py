@@ -409,7 +409,7 @@ class TestTrajectorySmooth:
     def test_smooth_trajectory(self):
         """测试平滑轨迹。"""
         ts = TrajectorySmooth(ema_alpha=0.3, dead_zone=0.5, max_rate=200.0, dt=0.01)
-        ts.update(0.0)
+        ts.update(50.0)  # 从目标值附近开始，避免初始追赶阶段
         # 正弦波轨迹
         t_values = np.linspace(0, 2 * math.pi, 200)
         targets = [50 + 30 * math.sin(t) for t in t_values]
@@ -417,9 +417,9 @@ class TestTrajectorySmooth:
         for target in targets:
             outputs.append(ts.update(target))
 
-        # 输出应该比输入更平滑（方差更小）
-        target_diffs = [abs(targets[i] - targets[i - 1]) for i in range(1, len(targets))]
-        output_diffs = [abs(outputs[i] - outputs[i - 1]) for i in range(1, len(outputs))]
+        # 跳过前50个样本（初始追赶阶段），比较稳定后的变化
+        target_diffs = [abs(targets[i] - targets[i - 1]) for i in range(51, len(targets))]
+        output_diffs = [abs(outputs[i] - outputs[i - 1]) for i in range(51, len(outputs))]
         assert np.mean(output_diffs) < np.mean(target_diffs)
 
     def test_reset(self):

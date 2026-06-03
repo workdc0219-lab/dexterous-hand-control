@@ -8,6 +8,7 @@ Usage:
 """
 
 import logging
+import math
 import time
 from typing import Optional
 
@@ -25,6 +26,10 @@ class TrajectorySmooth:
     2. 死区处理：角度变化小于阈值时保持上一次输出
     3. 速度限制：防止角度跳变过大
 
+    支持两种使用方式：
+    1. 单值模式：使用 update(target) 方法处理单个浮点数
+    2. 数组模式：使用 smooth(angles) 方法处理数组
+
     Attributes:
         alpha: EMA 平滑系数 (0, 1]，越小越平滑
         deadband: 死区阈值（度）
@@ -38,6 +43,10 @@ class TrajectorySmooth:
         deadband: float = 2.0,
         max_velocity: float = 180.0,
         num_joints: int = 5,
+        ema_alpha: float = None,
+        dead_zone: float = None,
+        max_rate: float = None,
+        dt: float = 0.01,
     ) -> None:
         """初始化轨迹平滑器.
 
@@ -46,30 +55,81 @@ class TrajectorySmooth:
             deadband: 死区阈值（度），变化量小于此值时保持上一次输出，默认 2.0
             max_velocity: 最大角速度（度/秒），防止跳变过大，默认 180.0
             num_joints: 关节数量，默认 5（5 个手指）
+            ema_alpha: EMA 平滑系数（别名，优先使用 alpha）
+            dead_zone: 死区阈值（别名，优先使用 deadband）
+            max_rate: 最大变化速率（别名，优先使用 max_velocity）
+            dt: 时间步长（秒），用于速率限制
         """
-        if not 0 < alpha <= 1:
-            raise ValueError(f"alpha 必须在 (0, 1] 范围内，实际值: {alpha}")
-        if deadband < 0:
-            raise ValueError(f"deadband 不能为负数，实际值: {deadband}")
-        if max_velocity <= 0:
-            raise ValueError(f"max_velocity 必须为正数，实际值: {max_velocity}")
+        # 支持两种参数命名方式
+        self.alpha = ema_alpha if ema_alpha is not None else alpha
+        self.deadband = dead_zone if dead_zone is not None else deadband
+        self.max_velocity = max_rate if max_rate is not None else max_velocity
+        self.dt = dt
 
-        self.alpha = alpha
-        self.deadband = deadband
-        self.max_velocity = max_velocity
+        if not 0 < self.alpha <= 1:
+            raise ValueError(f"alpha 必须在 (0, 1] 范围内，实际值: {self.alpha}")
+        if self.deadband < 0:
+            raise ValueError(f"deadband 不能为负数，实际值: {self.deadband}")
+        if self.max_velocity <= 0:
+            raise ValueError(f"max_velocity 必须为正数，实际值: {self.max_velocity}")
+
         self.num_joints = num_joints
 
-        # 状态变量
+        # 状态变量（单值模式）
+        self._value: Optional[float] = None
+
+        # 状态变量（数组模式）
         self._last_output: Optional[np.ndarray] = None
         self._last_time: Optional[float] = None
         self._initialized: bool = False
 
     def reset(self) -> None:
         """重置平滑器状态."""
+        self._value = None
         self._last_output = None
         self._last_time = None
         self._initialized = False
         logger.debug("轨迹平滑器已重置")
+
+    def update(self, target: float) -> float:
+        """更新平滑器（单值模式）。
+
+        处理顺序：EMA -> 死区 -> 速率限制
+
+        Args:
+            target: 目标值
+
+        Returns:
+            float: 平滑后的值
+        """
+        # 首次调用，直接返回目标值
+        if self._value is None:
+            self._value = target
+            return target
+
+        # EMA 平滑（先平滑，再判断死区）
+        smoothed = self.alpha * target + (1 - self.alpha) * self._value
+
+        # 死区处理（基于平滑后的值与当前值的差异）
+        diff = smoothed - self._value
+        if abs(diff) < self.deadband:
+            # 在死区内，保持当前值
+            filtered = self._value
+        else:
+            filtered = smoothed
+
+        # 速率限制
+        max_change = self.max_velocity * self.dt
+        diff = filtered - self._value
+        if abs(diff) > max_change:
+            limited = self._value + math.copysign(max_change, diff)
+        else:
+            limited = filtered
+
+        # 更新状态
+        self._value = limited
+
+        return limited
 
     def _apply_ema(self, current: np.ndarray, target: np.ndarray) -> np.ndarray:
         """应用指数移动平均.

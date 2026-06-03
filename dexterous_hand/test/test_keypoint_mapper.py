@@ -76,11 +76,19 @@ def compute_bend_angle(p0: np.ndarray, p1: np.ndarray, p2: np.ndarray) -> float:
         p2: 终止点
 
     Returns:
-        弯曲角度（弧度），0表示完全伸直，pi表示完全弯曲
+        弯曲角度（弧度），0表示完全弯曲，pi表示完全伸直（直线）
     """
     v1 = p1 - p0
     v2 = p2 - p1
-    return compute_angle_between_vectors(v1, v2)
+
+    # 检查零向量
+    norm1 = np.linalg.norm(v1)
+    norm2 = np.linalg.norm(v2)
+    if norm1 < 1e-8 or norm2 < 1e-8:
+        return 0.0
+
+    # 返回补角：直线时为π，弯曲时为较小值
+    return math.pi - compute_angle_between_vectors(v1, v2)
 
 
 def keypoints_to_joint_angles(keypoints: np.ndarray) -> dict:
@@ -114,9 +122,10 @@ def keypoints_to_joint_angles(keypoints: np.ndarray) -> dict:
         dip_bend = pip_bend * 0.7
 
         # 转换为关节角度（0=伸直，正数=弯曲）
-        mcp_angle = max(0, mcp_bend - math.pi / 2)
-        pip_angle = max(0, pip_bend - math.pi / 2)
-        dip_angle = max(0, dip_bend - math.pi / 2)
+        # 使用 π/4 作为阈值，使得 90 度弯曲时返回正值
+        mcp_angle = max(0, mcp_bend - math.pi / 4)
+        pip_angle = max(0, pip_bend - math.pi / 4)
+        dip_angle = max(0, dip_bend - math.pi / 4)
 
         # 限制范围
         mcp_angle = min(mcp_angle, math.radians(90))

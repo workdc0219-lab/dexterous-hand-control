@@ -89,7 +89,7 @@ class KeypointMapper:
         point2: np.ndarray,
         point3: np.ndarray,
     ) -> float:
-        """计算三个点形成的角度（point2 为顶点）.
+        """计算三个点形成的角度（point2 为顶点）。
 
         Args:
             point1: 第一个点 [x, y] 或 [x, y, z]
@@ -97,9 +97,9 @@ class KeypointMapper:
             point3: 第三个点 [x, y] 或 [x, y, z]
 
         Returns:
-            float: 角度（度）
+            float: 角度（度），0-180
         """
-        # 计算向量
+        # 计算向量（以 point2 为顶点）
         vec1 = point1[:2] - point2[:2]
         vec2 = point3[:2] - point2[:2]
 
@@ -129,7 +129,7 @@ class KeypointMapper:
         joint2: np.ndarray,
         tip: np.ndarray,
     ) -> float:
-        """计算手指弯曲角度.
+        """计算手指弯曲角度。
 
         通过计算关节链的弯曲程度来估算手指弯曲角度。
         弯曲角度 = 180 - 平均关节角度
@@ -143,7 +143,7 @@ class KeypointMapper:
         Returns:
             float: 弯曲角度（度），0 表示完全伸直，90 表示完全弯曲
         """
-        # 计算三个关节角度
+        # 计算三个关节角度（度）
         angle1 = self._calculate_angle(base, joint1, joint2)
         angle2 = self._calculate_angle(joint1, joint2, tip)
 
